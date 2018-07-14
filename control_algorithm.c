@@ -74,11 +74,11 @@ double PID_Position_Type_Control(SPID *pid, double position)//位置试PID
 }
 
 /**************************************************
-                  增量式PID控制，开定时器使用
+              增量式PID控制，返回值为控制增量
  *************************************************/
 double PID_Increment_Type_Control(SPID *pid, double position)//增量试PID
 {
-    pid->LAST_Out = pid->NOW_Out;
+    pid->LAST_Out = pid->NOW_Out;//U[K-1]=U[K]
     pid->NOW_Error = pid->SET_Point - position;//求当前误差
     pid->Integration_Sum = pid->Integration_Sum + pid->NOW_Error;//积分项累加
     pid->LAST_Error = pid->SET_Point - pid->Old_Position;//求上次误差
@@ -88,7 +88,7 @@ double PID_Increment_Type_Control(SPID *pid, double position)//增量试PID
     pid->D_TERM = pid->KD * ( pid->NOW_Error - pid->LAST_Error );
     pid->NOW_Out = pid->P_TERM + pid->I_TERM + pid->D_TERM;
     pid->Out_Increment = pid->NOW_Out - pid->LAST_Out;
-    return pid->NOW_Out + pid->Out_Increment;
+    return pid->Out_Increment;
 }
 
 /**************************************************
